@@ -6,8 +6,14 @@
       <h1 class = 'post_title'>{{ .Title }}</h1>
       <div class = 'post_body'>
         <div class = 'post_inner'>
+        {{ $scratch := newScratch }}
         {{ with .Params.image }}
-          <img src = '{{ absURL (printf "images/%s" .) }}' alt = '{{ . }}' class = 'post_thumbnail'>
+          {{ if (hasPrefix . "http") }}
+            {{ $scratch.Set "image" . }}
+          {{else}}
+            {{ $scratch.Set "image" (absURL (printf "images/%s" .)) }}
+          {{ end }}
+          <img src = '{{ $scratch.Get "image" }}' alt = '{{ . }}' class = 'post_thumbnail'>
         {{ end }}
           {{ .Content }}
         </div>
