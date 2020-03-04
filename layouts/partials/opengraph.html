@@ -5,7 +5,13 @@
 <meta property = 'og:description' content = '{{ with .Summary}}{{ . | truncate 150 }}{{ else }}{{ .Site.Params.description }}{{ end }}'>
 <meta property = 'og:url' content = '{{ .Permalink }}' />
 {{- with .Params.image }}
-<meta property = 'og:image' content = '{{ absURL (printf "images/%s" .) }}'/>
+  {{ $scratch := newScratch }}
+  {{ if (hasPrefix . "http") }}
+    {{ $scratch.Set "image" . }}
+  {{else}}
+    {{ $scratch.Set "image" (absURL (printf "images/%s" .)) }}
+  {{ end }}
+  <meta property = 'og:image' content = '{{ ($scratch.Get "image") }}'/>
 {{- else }}
 <meta property = 'og:image' content = '{{ absURL (printf "images/%s" .Site.Params.logo) }}'/>
 {{- end }}
